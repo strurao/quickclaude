@@ -7,10 +7,10 @@ $ quickclaude
 
 ┌  quickclaude
 │
-◆  프로젝트를 선택하세요
-│  ● ~/Documents/projects/autogeek
-│  ○ ~/Documents/projects/my-app
-│  ○ ~/Documents/projects/website
+◆  Select a project
+│  ● ~/Documents/projects/my-app1
+│  ○ ~/Documents/projects/my-app2
+│  ○ ~/Documents/projects/my-app3
 └
 ```
 
