@@ -140,14 +140,22 @@ async function main() {
   const response = await prompts({
     type: "autocomplete",
     name: "project",
-    message: "Select a project",
+    message: "Select a project (type to search)",
     choices,
-    suggest: (input, choices) =>
-      Promise.resolve(
-        choices.filter((c) =>
-          c.title.toLowerCase().includes(input.toLowerCase())
-        )
-      ),
+    suggest: (input, choices) => {
+      if (!input) return Promise.resolve(choices);
+      const lower = input.toLowerCase();
+      return Promise.resolve(
+        choices.filter((c) => {
+          const title = c.title.toLowerCase();
+          let j = 0;
+          for (let i = 0; i < title.length && j < lower.length; i++) {
+            if (title[i] === lower[j]) j++;
+          }
+          return j === lower.length;
+        })
+      );
+    },
   });
 
   if (!response.project) {
