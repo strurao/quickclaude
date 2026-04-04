@@ -23,7 +23,7 @@ quickclaude uses this directory structure in reverse — it scans `~/.claude/pro
 
 1. Scans `~/.claude/projects/` to discover your Claude Code projects
 2. Sorts by most recently used, with relative timestamps (e.g. `2h ago`)
-3. Shows an interactive selection menu
+3. Shows an interactive selection menu with fuzzy search
 4. Launches `claude` in the selected directory
 
 Any CLI arguments are forwarded to `claude`:
@@ -32,6 +32,13 @@ Any CLI arguments are forwarded to `claude`:
 quickclaude --resume
 # equivalent to: cd <selected-project> && claude --resume
 ```
+
+## Features
+
+- **Fuzzy search** — Type to filter projects instantly (start typing to search)
+- **Smart sorting** — Projects sorted by most recently used, with relative timestamps
+- **Path resolution** — Accurately resolves encoded project directory names back to real paths
+- **Argument forwarding** — Any CLI arguments are passed through to `claude`
 
 ## Install
 
