@@ -14,8 +14,8 @@ const CLAUDE_PROJECTS_DIR = join(homedir(), ".claude", "projects");
 // -를 /로 바꾸면 mcp/overwatch가 되어 틀려짐
 // → 파일시스템을 실제로 탐색하며 매칭
 function resolvePath(encoded, root = sep) {
-  const parts = encoded.replace(/^-/, "").split("-");
-  if (parts.length === 0 || (parts.length === 1 && parts[0] === "")) return null;
+  const parts = encoded.replace(/^-/, "").split("-").filter(Boolean);
+  if (parts.length === 0) return null;
   let current = root;
   let i = 0;
 
