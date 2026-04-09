@@ -29,20 +29,26 @@ function resolvePath(encoded, root = sep) {
   }
 
   while (i < parts.length) {
-    let entries;
+    let entryList;
     try {
-      entries = new Set(readdirSync(current));
+      entryList = readdirSync(current);
     } catch {
       return null;
     }
+    const entries = new Set(entryList);
+    // Case-insensitive fallback (Windows and macOS are case-insensitive by default)
+    const ciMap = new Map(entryList.map((e) => [e.toLowerCase(), e]));
 
     let matched = false;
     for (let len = parts.length - i; len >= 1; len--) {
       const segment = parts.slice(i, i + len);
       for (const joiner of ["-", " ", ".", "_"]) {
         const candidate = segment.join(joiner);
-        if (entries.has(candidate)) {
-          current = join(current, candidate);
+        const actual = entries.has(candidate)
+          ? candidate
+          : ciMap.get(candidate.toLowerCase()) ?? null;
+        if (actual) {
+          current = join(current, actual);
           i += len;
           matched = true;
           break;
@@ -168,18 +174,26 @@ async function main() {
     searchKey: getSearchKey(proj.path),
   }));
 
-  const response = await prompts({
-    type: "autocomplete",
-    name: "project",
-    message: "Select a project (type to search)",
-    choices,
-    suggest: (input, choices) => {
-      if (!input) return Promise.resolve(choices);
-      return Promise.resolve(
-        choices.filter((c) => fuzzyMatch(input, c.searchKey))
-      );
+  const response = await prompts(
+    {
+      type: "autocomplete",
+      name: "project",
+      message: "Select a project (type to search)",
+      choices,
+      suggest: (input, choices) => {
+        if (!input) return Promise.resolve(choices);
+        return Promise.resolve(
+          choices.filter((c) => fuzzyMatch(input, c.searchKey))
+        );
+      },
     },
-  });
+    {
+      onCancel: () => {
+        console.log("  Cancelled\n");
+        process.exit(0);
+      },
+    }
+  );
 
   if (!response.project) {
     console.log("  Cancelled\n");
