@@ -34,3 +34,32 @@ describe("getLatestMtime", () => {
     assert.ok(latest > 0);
   });
 });
+
+describe("deduplicateProjects", () => {
+  it("removes case-duplicate paths on Windows, keeping higher mtime", async () => {
+    const { deduplicateProjects } = await import("../bin/quickclaude.js");
+
+    const projects = [
+      { dirName: "a", path: "C:\\Users\\Test\\Documents\\foo", mtime: 100 },
+      { dirName: "b", path: "C:\\Users\\Test\\documents\\foo", mtime: 200 },
+      { dirName: "c", path: "C:\\Users\\Test\\Bar", mtime: 300 },
+    ];
+
+    const result = deduplicateProjects(projects, "win32");
+    assert.equal(result.length, 2);
+    const foo = result.find((p) => p.path.toLowerCase().includes("foo"));
+    assert.equal(foo.mtime, 200);
+  });
+
+  it("does not deduplicate on non-Windows (paths are case-sensitive)", async () => {
+    const { deduplicateProjects } = await import("../bin/quickclaude.js");
+
+    const projects = [
+      { dirName: "a", path: "/Users/Test/Documents/foo", mtime: 100 },
+      { dirName: "b", path: "/Users/Test/documents/foo", mtime: 200 },
+    ];
+
+    const result = deduplicateProjects(projects, "linux");
+    assert.equal(result.length, 2);
+  });
+});
