@@ -204,6 +204,7 @@ async function main() {
   const child = spawn("claude", args, {
     cwd: response.project,
     stdio: "inherit",
+    shell: process.platform === "win32",
   });
 
   child.on("exit", (code) => {
