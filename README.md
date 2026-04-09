@@ -6,7 +6,6 @@ Quickly launch Claude Code in your project directories.
 ```
 $ quickclaude
 ```
-<img width="406" height="272" alt="Screenshot 2026-04-04 at 8 33 09 PM" src="https://github.com/user-attachments/assets/4ee37895-eaac-4dd6-90a8-589ec640f420" />
 
 
 ## How it works
@@ -40,7 +39,7 @@ quickclaude --resume
 npm install -g quickclaude
 ```
 
-Or run without installing:
+Or run without installing
 
 ```bash
 npx quickclaude
