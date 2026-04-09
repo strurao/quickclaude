@@ -137,6 +137,21 @@ function getProjectLabel(path, mtimeMs) {
   return `${timeAgo(mtimeMs)} · ${display}`;
 }
 
+function getSearchKey(filePath) {
+  const segments = filePath.split(/[\\/]/).filter(Boolean);
+  return segments.slice(-2).join("/");
+}
+
+function fuzzyMatch(input, target) {
+  const lower = input.toLowerCase();
+  const t = target.toLowerCase();
+  let j = 0;
+  for (let i = 0; i < t.length && j < lower.length; i++) {
+    if (t[i] === lower[j]) j++;
+  }
+  return j === lower.length;
+}
+
 async function main() {
   console.log("\n  quickclaude\n");
 
@@ -150,6 +165,7 @@ async function main() {
   const choices = projects.map((proj) => ({
     title: getProjectLabel(proj.path, proj.mtime),
     value: proj.path,
+    searchKey: getSearchKey(proj.path),
   }));
 
   const response = await prompts({
@@ -159,16 +175,8 @@ async function main() {
     choices,
     suggest: (input, choices) => {
       if (!input) return Promise.resolve(choices);
-      const lower = input.toLowerCase();
       return Promise.resolve(
-        choices.filter((c) => {
-          const title = c.title.toLowerCase();
-          let j = 0;
-          for (let i = 0; i < title.length && j < lower.length; i++) {
-            if (title[i] === lower[j]) j++;
-          }
-          return j === lower.length;
-        })
+        choices.filter((c) => fuzzyMatch(input, c.searchKey))
       );
     },
   });
@@ -208,7 +216,7 @@ async function main() {
   });
 }
 
-export { resolvePath, timeAgo, getProjectLabel, getProjects, getLatestMtime, deduplicateProjects };
+export { resolvePath, timeAgo, getProjectLabel, getProjects, getLatestMtime, deduplicateProjects, getSearchKey, fuzzyMatch };
 
 try {
   if (realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
