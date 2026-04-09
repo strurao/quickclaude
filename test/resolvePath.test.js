@@ -53,4 +53,22 @@ describe("resolvePath", () => {
     const encoded = "-C-stuff";
     assert.equal(resolvePath(encoded, root), join(root, "C", "stuff"));
   });
+
+  it("resolves dot-separated directory names (e.g. EB.Code)", () => {
+    mkdirSync(join(root, "Users", "test", "projects", "EB.Code"), { recursive: true });
+    const encoded = "-Users-test-projects-EB-Code";
+    assert.equal(resolvePath(encoded, root), join(root, "Users", "test", "projects", "EB.Code"));
+  });
+
+  it("resolves underscore-separated directory names", () => {
+    mkdirSync(join(root, "Users", "test", "projects", "my_project"), { recursive: true });
+    const encoded = "-Users-test-projects-my-project";
+    assert.equal(resolvePath(encoded, root), join(root, "Users", "test", "projects", "my_project"));
+  });
+
+  it("resolves multi-segment dot names (e.g. com.example.app)", () => {
+    mkdirSync(join(root, "Users", "test", "projects", "com.example.app"), { recursive: true });
+    const encoded = "-Users-test-projects-com-example-app";
+    assert.equal(resolvePath(encoded, root), join(root, "Users", "test", "projects", "com.example.app"));
+  });
 });

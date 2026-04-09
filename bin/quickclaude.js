@@ -39,7 +39,7 @@ function resolvePath(encoded, root = sep) {
     let matched = false;
     for (let len = parts.length - i; len >= 1; len--) {
       const segment = parts.slice(i, i + len);
-      for (const joiner of ["-", " "]) {
+      for (const joiner of ["-", " ", ".", "_"]) {
         const candidate = segment.join(joiner);
         if (entries.has(candidate)) {
           current = join(current, candidate);
